@@ -1,0 +1,20 @@
+- project:
+    name: tox-example
+
+    tox/node: tox-node # example
+
+    project-key: AA  # example
+    repo-slug: jjb-library  # example
+    branch-display-name: master
+    branch: master
+
+    host: git.my-bitbucket.org
+    port: 443
+    credentials-id: ''
+    username: ''
+    password: ''
+
+    tox/timeout: 10
+
+    jobs:
+    - library/tox

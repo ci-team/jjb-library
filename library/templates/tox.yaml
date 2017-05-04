@@ -1,0 +1,71 @@
+- job-template:
+    id: 'library/tox'
+    name: '{project-key}.{repo-slug}.{branch-display-name}.tox'
+
+    description: |
+      <h2> Tox tests
+      <p>
+      Run tox for PRs in {project-key}/{repo-slug} proposed to {branch}
+
+    node: '{tox/node}'
+
+    concurrent: true
+
+    stash-poll-timer: '* * * * *'  # !default
+    tox/timeout: 10 # !default
+
+    parameters:
+    - library/stash-trigger/parameters
+
+    wrappers:
+    - inject-passwords:
+        global: true
+        mask-password-params: true
+    - ansicolor:
+        colormap: xterm
+    - timeout:
+        fail: true
+        timeout: '{tox/timeout}'
+        write-description: true
+
+    triggers:
+    - library/stash-trigger/trigger:
+        project-key: '{project-key}'
+        repo-slug: '{repo-slug}'
+        branch: '{branch}'
+        timer: '{stash-poll-timer}'
+        host: '{host}'
+        credentials-id: '{credentials-id}'
+        username: '{username}'
+        password: '{password}'
+
+    scm:
+    - library/stash-trigger/scm:
+        host: '{host}'
+        port: '{port}'
+        username: '{username}'
+        password: '{password}'
+        credentials-id: '{credentials-id}'
+
+    builders:
+    - shell: |
+        #!/bin/bash
+        set -ex
+
+        # workaround for old RHELs, we need to install correct tox system-wide
+        rm -rf venv
+        virtualenv venv
+        source venv/bin/activate
+        pip install pip --upgrade
+        pip install tox
+        # ---
+
+        rm -rf .tox
+        tox
+
+    publishers:
+    - library/stash-trigger/publish-feedback:
+        host: '{host}'
+        username: '{username}'
+        password: '{password}'
+        credentials-id: '{credentials-id}'

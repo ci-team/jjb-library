@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# This script expects these environment variables to be set:
+# WORKSPACE - std. Jenkins variable, workspace of current build
+# BUILD_URL - std. Jenkins variable, url of current build
+# targetBranch - target branch of pull-request, provided by stash-pr-trigger
+# pullRequestId - pull-request ID, provided by stash-pr-trigger
+
 set -ex
 
 # workaround for old RHELs, we need to install correct tox system-wide
