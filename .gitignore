@@ -1,0 +1,8 @@
+*.pyc
+output/
+*.ini
+!tox.ini
+.tox
+.idea
+.venv
+venv
