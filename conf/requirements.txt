@@ -1,0 +1,2 @@
+jenkins-job-builder==1.6.1
+git+https://github.com/bookwar/jenkins-job-builder-stash-pr
