@@ -1,0 +1,41 @@
+- trigger:
+    # Base trigger for pull-requests
+    #
+    # Poll BitBucket server and trigger job on
+    # newly created requests or changed ones.
+    #
+    # This is shortened version of original trigger with recommended
+    # default values.
+    #
+    # Parameters:
+    #
+    # timer           how often to poll server in cron fmt,
+    # web-url         base url of your server, fe http://git.my.com/
+    # ignore-ssl      ssl-ignorance for untrusted certs
+    # project         name of project (short key) to check
+    # repo            name of repo (slug) to check
+    # branch          name of branch to check
+    # credentials-id  credentials from Jenkins credentials to use for
+    #                 polling BitBucket API (login+password)
+
+    name: library/bitbucket/pr-trigger
+
+    triggers:
+    - stash:
+        spec: '{timer}'
+        cron: '{timer}'
+        stash_host: '{web-url}'
+        project_code: '{project}'
+        repository_name: '{repo}'
+        credentials-id: '{credentials-id}'
+        ci_skip_phrases: 'NO TEST'
+        ci_build_phrases: 'test this please'
+        target_branches_to_build: '{branch}'
+        ignore_ssl: '{ignore-ssl}'
+        check_destination_commit: 'false'
+        check_mergeable: 'false'
+        merge_on_success: 'false'
+        check_not_conflicted: 'false'
+        only_build_on_comment: 'false'
+        delete_previous_build_finish_comments: 'false'
+        cancel_outdated_jobs_enabled: 'true'

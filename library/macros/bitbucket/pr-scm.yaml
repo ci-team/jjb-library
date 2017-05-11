@@ -1,0 +1,31 @@
+- scm:
+    # Base scm for pull-requests
+    #
+    # Will check out source commit e.g. HEAD of PR
+    #
+    # Should work together with
+    # - library/bitbucket/pr-trigger
+    # - library/bitbucket/pr-params
+    #
+    # These components will provide variables required for this scm, such as
+    # - $destinationRepositoryOwner
+    # - $destinationRepositoryName
+    # - $sourceCommitHash
+    #
+    # Parameters:
+    #
+    # credentials-id  credentials from Jenkins credentials to use for
+    #                 fetching repo from BitBucket (ssh)
+    # host            hostname of BitBucket Server
+    # port            ssh port on BitBucket Server
+
+    name: library/bitbucket/pr-scm
+
+    scm:
+    - git:
+        url: '{git-url}/$destinationRepositoryOwner/$destinationRepositoryName.git'
+        refspec: '+refs/pull-requests/*:refs/remotes/origin/pr/*'
+        credentials-id: '{credentials-id}'
+        branches:
+        - '$sourceCommitHash'
+        wipe-workspace: true

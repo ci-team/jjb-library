@@ -1,0 +1,18 @@
+- project:
+    name: minimal-bitbucket-pr-check
+    job-prefix: bitbucket.
+
+    gitserver-type: bitbucket
+    gitserver-web-url: 'https://git.example.com'
+    gitserver-git-url: 'git://git@git.example.com:7999'
+    gitserver-pr-poll-timer: '*/2 * * * *'
+    gitserver-ignore-ssl: 'true'
+    gitserver-api-credentials-id: example-ci-pwd
+    gitserver-ssh-credentials-id: example-ci-ssh
+
+    project: DEMO
+    repo: example-1
+    branch: master
+
+    jobs:
+    - example/minimal-pr-check

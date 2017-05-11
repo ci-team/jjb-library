@@ -1,0 +1,34 @@
+- job-template:
+    id: example/minimal-pr-check
+    name: '{job-prefix}{project}.{repo}.{branch}.pr.check'
+
+    parameters:
+    - library/{gitserver-type}/pr-parameters
+
+    triggers:
+    - library/{gitserver-type}/pr-trigger:
+        web-url: '{gitserver-web-url}'
+        timer: '{gitserver-pr-poll-timer}'
+        project: '{project}'
+        repo: '{repo}'
+        branch: '{branch}'
+        credentials-id: '{gitserver-api-credentials-id}'
+        ignore-ssl: '{gitserver-ignore-ssl}'
+
+    scm:
+    - library/{gitserver-type}/pr-scm:
+        credentials-id: '{gitserver-ssh-credentials-id}'
+        git-url: '{gitserver-git-url}'
+
+    builders:
+    - library/{gitserver-type}/pr-adapter
+    - shell: |
+        #!/bin/bash
+        set -ex
+        env
+        exit 0
+
+    publishers:
+    - library/{gitserver-type}/pr-publisher:
+        web-url: '{gitserver-web-url}'
+        credentials-id: '{gitserver-api-credentials-id}'
