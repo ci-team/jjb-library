@@ -1,0 +1,40 @@
+- builder:
+  # Adapter for PR that came from BitBucket server
+  #
+  # This adapter makes possible to use generic building
+  # blocks developed for abstract PR provider with BitBucket
+  # Server.
+  #
+  # Note: This adapters expects to find variables set by
+  # - library/bitbucket/pr-trigger
+  # - library/bitbucket/pr-params
+  #
+  # These components will provide variables required for this scm, such as
+  # - $pullRequestTitle
+  # - $pullRequestId
+  # - $projectCode
+  # - $repositoryName
+  # - $sourceBranch
+  # - $sourceCommitHash
+  # - $destinationRepositoryOwner
+  # - $destinationRepositoryName
+  #
+  # Parameters:
+  #
+  # no parameters.
+
+    name: library/bitbucket/pr-adapter
+
+    builders:
+    - inject:
+        properties-content: |
+          JJBL_PR_TITLE=$pullRequestTitle
+          JJBL_PR_ID=$pullRequestId
+          JJBL_PR_SRC_PROJECT=$projectCode
+          JJBL_PR_SRC_REPO=$repositoryName
+          JJBL_PR_SRC_BRANCH=$sourceBranch
+          JJBL_PR_SRC_COMMIT=$sourceCommitHash
+          JJBL_PR_DST_PROJECT=$destinationRepositoryOwner
+          JJBL_PR_DST_REPO=$destinationRepositoryName
+          JJBL_PR_DST_BRANCH=$targetBranch
+          JJBL_PR_DST_MERGE=origin/pr/$pullRequestId/merge

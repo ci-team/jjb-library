@@ -1,0 +1,28 @@
+- publisher:
+    # Publisher for PR that came from BitBucket server
+    #
+    # This publisher posts badges on commits and provides refs to
+    # crsp. builds in jenkins
+    #
+    # Note: This adapters expects to find variables set by
+    # - library/bitbucket/pr-trigger
+    # - library/bitbucket/pr-params
+    #
+    # These components will provide variables required for this scm, such as
+    # - $sourceCommitHash
+    #
+    # Parameters:
+    #
+    # web-url         base url of your server api, fe http://git.my.com/
+    # credentials-id  credentials from Jenkins credentials to use for
+    #                 posting via BitBucket API (login+password)
+
+    name: library/bitbucket/pr-publisher
+
+    publishers:
+    - stash:
+        url: '{web-url}'
+        credentials-id: '{credentials-id}'
+        ignore-ssl: false
+        commit-sha1: $sourceCommitHash
+        include-build-number: true
