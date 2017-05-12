@@ -1,0 +1,94 @@
+- parameter:
+    name: library/stash-trigger/parameters
+
+    parameters:
+    # PR Info
+    - string:
+        name: pullRequestTitle
+        description: 'Pull Request: Title'
+        default: ''
+    - string:
+        name: pullRequestId
+        description: 'Pull Request: Identifier'
+        default: ''
+    # PR Source
+    - string:
+        name: projectCode
+        description: 'Source: Project'
+        default: ''
+    - string:
+        name: repositoryName
+        description: 'Source: Repository'
+        default: ''
+    - string:
+        name: sourceBranch
+        description: 'Source: Branch'
+        default: ''
+    - string:
+        name: sourceCommitHash
+        description: 'Source: Commit hash of Pull Request HEAD'
+        default: ''
+    # PR Target
+    - string:
+        name: destinationRepositoryOwner
+        description: 'Target: Project'
+        default: ''
+    - string:
+        name: destinationRepositoryName
+        description: 'Target: Repository'
+        default: ''
+    - string:
+        name: targetBranch
+        description: 'Target: Branch'
+        default: ''
+
+
+- trigger:
+    name: library/stash-trigger/trigger
+
+    triggers:
+    - stash:
+        spec: '{timer}'
+        cron: '{timer}'
+        stash_host: 'https://{host}/'
+        project_code: '{project-key}'
+        repository_name: '{repo-slug}'
+        credentials-id: '{credentials-id}'
+        username: '{username}'
+        password: '{password}'
+        ci_skip_phrases: 'NO TEST'
+        ci_build_phrases: 'test this please'
+        target_branches_to_build: '{branch}'
+        ignore_ssl: 'true'
+        check_destination_commit: 'false'
+        check_mergeable: 'false'
+        merge_on_success: 'false'
+        check_not_conflicted: 'false'
+        only_build_on_comment: 'false'
+        delete_previous_build_finish_comments: 'false'
+        cancel_outdated_jobs_enabled: 'true'
+
+- scm:
+    name: library/stash-trigger/scm
+
+    scm:
+    - git:
+        url: 'ssh://git@{host}:{port}/$destinationRepositoryOwner/$destinationRepositoryName.git'
+        refspec: '+refs/pull-requests/*:refs/remotes/origin/pr/*'
+        credentials-id: '{credentials-id}'
+        branches:
+        - '$sourceCommitHash'
+        wipe-workspace: true  # workaround for force-push and rebase
+
+- publisher:
+    name: library/stash-trigger/publish-feedback
+
+    publishers:
+    - stash:
+        url: 'https://{host}'
+        username: '{username}'
+        password: '{password}'
+        credentials-id: '{credentials-id}'
+        ignore-ssl: false
+        commit-sha1: $GIT_COMMIT
+        include-build-number: true

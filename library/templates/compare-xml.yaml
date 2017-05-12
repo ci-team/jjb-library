@@ -1,0 +1,67 @@
+- job-template:
+    id: 'library/compare-xml'
+    name: '{project-key}.{repo-slug}.{branch-display-name}.compare-xml'
+
+    description: |
+      <h2> Compare xmls
+      <p>
+      Compare JJB output for PRs in {project-key}/{repo-slug} proposed to {branch}
+
+    node: 'jjb_update'
+
+    concurrent: true
+
+    stash-poll-timer: '* * * * *'
+
+    parameters:
+    - library/stash-trigger/parameters
+
+    wrappers:
+    - inject-passwords:
+        global: true
+        mask-password-params: true
+    - ansicolor:
+        colormap: xterm
+    - timeout:
+        fail: true
+        timeout: '{timeout}'
+        write-description: true
+
+    triggers:
+    - library/stash-trigger/trigger:
+        project-key: '{project-key}'
+        repo-slug: '{repo-slug}'
+        branch: '{branch}'
+        timer: '{stash-poll-timer}'
+        host: '{host}'
+        credentials-id: '{credentials-id}'
+        username: '{username}'
+        password: '{password}'
+
+    scm:
+    - library/stash-trigger/scm:
+        host: '{host}'
+        port: '{port}'
+        username: '{username}'
+        password: '{password}'
+        credentials-id: '{credentials-id}'
+
+    builders:
+    - shell:
+        !include-raw-escape: '../scripts/jjb_compare_xml.sh'
+
+    publishers:
+
+    - archive:
+        artifacts: 'output/**'
+        allow-empty: 'true'
+
+    - description-setter:
+        regexp: (^<b>(JOBS|VIEWS):</b><br>\[(?!blocked)[a-z]*\].*)
+        regexp-for-failed: (^<b>(JOBS|VIEWS):</b><br>\[blocked\].*)
+
+    - library/stash-trigger/publish-feedback:
+        host: '{host}'
+        username: '{username}'
+        password: '{password}'
+        credentials-id: '{credentials-id}'
