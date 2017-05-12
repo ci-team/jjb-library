@@ -1,0 +1,18 @@
+- project:
+    name: compare-xml
+
+    timeout: 10
+
+    project-key: AA  # example
+    repo-slug: jjb-library  # example
+    branch-display-name: master
+    branch: master
+
+    host: git.my-bitbucket.org
+    port: 443
+    credentials-id: ''
+    username: ''
+    password: ''
+
+    jobs:
+    - library/compare-xml
